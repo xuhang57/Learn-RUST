@@ -1,0 +1,7 @@
+[package]
+name = "references"
+version = "0.1.0"
+authors = ["xuhang57 <xuhang57@users.noreply.github.com>"]
+edition = "2018"
+
+[dependencies]
