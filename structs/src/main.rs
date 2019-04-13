@@ -19,6 +19,14 @@ impl Rectangle {
     fn area(&self) -> u32 {
         self.width * self.height
     }
+
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        self.width > other.width && height > other.height
+    }
+
+    fn square(size: u32) -> Rectangle {
+        Rectangle { width: size, height: size}
+    }
 }
 
 struct Color(i32, i32, i32);
@@ -100,6 +108,8 @@ fn main() {
     // );
 
     let rect1 = Rectangle { width: 30, height: 50};
+    let rect2 = Rectangle { width: 10, height: 40};
+    let rect3 = Rectangle { width: 60, height: 45};
 
     println!(
         "The area of a rectangle is {} square pixels.",
@@ -118,6 +128,10 @@ fn main() {
         rect1.area()
     );
 
+    println!("Can rect1 hold rect2? {}", rect1.can_hold(&rect2));
+    println!("Can rect2 hold rect3? {}", rect2.can_hold(&rect3));
+
+    let sq = Rectangle::square(3);
     
 }
 
@@ -143,8 +157,17 @@ and a return value, and they contain some code tht is run when they are called f
 The main benefit using method is to put all the things we ca ndo with an instance of a type in one impl block
 rather than making future users of our code search for capabilities of Rectangle in various places
 
-"->"
+In C/C++, two different operators are used for calling methods, one is ".", if you are calling a method on the object
+directly and "->" if you are calling the method on a pointer to the object and need to dereference the pointer first
+So, if "object" is a pointer, "object->something()" is similar to (*object).something().
 
-".": in C/C++, two different operators are used for calling methods, one is "."
+Rust has a feature called automatic referencing and dereferencing. Calling method is one of the few places is Rust that
+has this behavior. 
+
+p1.distance(&p2); // auto referencing
+(&p1).distance(&p2);
+
+By using struct, you can keep associated pieces of data connected  to each other and name each piece to make your code clear
+Structs arenot the only way you can create custom types; Rust has enum feature as well
 */
 
