@@ -97,13 +97,14 @@ if let Some(3) = some_u8_value {
 let mut count = 0;
 match coin {
     Coin::Quarter(state) => println!("State quarter from {:?}!", state),
+    // _ placeholder: matches any value
     _ => count += 1,
 }
 
 let mut count = 0;
 if let Coin::Quarter(state) = coin {
     println!("State quarter from {:?}!", state);
-} else {
+} else { // same as the block of code that would go with the _ case in the match expression
     count += 1;
 }
 
@@ -115,7 +116,7 @@ fn main() {
 Combining match and enums is useful in many situations. You will see this pattern a lot in Rust code:
 match against an enum, bind a variable to the data inside, and then execute code based on it.
 
-matches are exhaustive. Rust knows that we did not cover every possible case and even knows which pattern
+Matches are exhaustive. Rust knows that we did not cover every possible case and even knows which pattern
 we forgot. We must exhaust every last possibility in order for the code to be valid.
 
 The _ pattern will match any value. It's called a placeholder.
@@ -124,6 +125,12 @@ However, the match expression can be a bit wordy in a situation in which we care
 We could just use `if let`.
 
 You can think of `if let` as syntax sugar for a match that runs code when the value matches one pattern
-and then ignores all other values
+and then ignores all other values. You would lose the exhaustive checking that match enforces.
+
+Choosing between match and if let depends on what you are doing in your particular situation and whether
+gaining conciseness is an appropriate trade-off losing exhaustive checking
+
+Creating custom types to use in your API ensures type safety: the compiler will make certain your functions
+get only values of the type each function expects
 
 */
