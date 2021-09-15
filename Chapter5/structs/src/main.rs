@@ -20,12 +20,18 @@ impl Rectangle {
         self.width * self.height
     }
 
+    // method
     fn can_hold(&self, other: &Rectangle) -> bool {
         self.width > other.width && height > other.height
     }
 
+    // associated functions, often used for constructors that will return a new instance
+    // not methods, but functions
     fn square(size: u32) -> Rectangle {
-        Rectangle { width: size, height: size}
+        Rectangle {
+            width: size,
+            height: size,
+        }
     }
 }
 
@@ -168,6 +174,6 @@ p1.distance(&p2); // auto referencing
 (&p1).distance(&p2);
 
 By using struct, you can keep associated pieces of data connected  to each other and name each piece to make your code clear
-Structs arenot the only way you can create custom types; Rust has enum feature as well
+Structs are not the only way you can create custom types; Rust has enum feature as well
 */
 
