@@ -1,12 +1,4 @@
 fn main() {
-    // This is an example of a line comment
-    // There are two slashes at the beginning of the line
-    // And nothing written inside these will be read by the compiler
-
-    // println!("Hello, world!");
-
-    // Run it. See? Now try deleting the two slashes, and run it again.
-
     /*
      * This is another type of comment, a block comment. In general,
      * line comments are the recommended comment style. But
@@ -21,9 +13,6 @@ fn main() {
     no actual need for it.
     */
 
-    // You can manipulate expressions more easily with block comments
-    // than with line comments. Try deleting the comment delimiters
-    // to change the result:
     let x = 5 + /* 90 + */ 5;
-    println!("Is `x` 10 or 100? x = {}", x);
+    println!("Is `x` 10 or 100? x = {}", x); // x = 10
 }

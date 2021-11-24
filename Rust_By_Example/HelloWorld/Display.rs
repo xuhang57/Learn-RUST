@@ -18,6 +18,10 @@ impl fmt::Display for Structure {
     }
 }
 
+// No ideal style for all types and the std library doesn't presume to dictate one.
+// fmt::Display is not implemented for Vec<T> or for any other generic containers.
+// fmt::Debug must then be used for these generic cases.
+
 use std::fmt; // Import `fmt`
 
 // A structure holding two numbers. `Debug` will be derived so the results can
@@ -72,3 +76,13 @@ fn main() {
     // requires `fmt::Binary` to be implemented. This will not work.
     // println!("What does Point2D look like in binary: {:b}?", point);
 }
+
+// Output:
+
+// Compare structures:
+// Display: (0, 14)
+// Debug: MinMax(0, 14)
+// The big range is (-300, 300) and the small is (-3, 3)
+// Compare points:
+// Display: x: 3.3, y: 7.2
+// Debug: Point2D { x: 3.3, y: 7.2 }

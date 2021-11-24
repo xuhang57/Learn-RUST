@@ -19,20 +19,21 @@ struct Deep(Structure);
 
 fn main() {
     // Printing with `{:?}` is similar to with `{}`.
-    println!("{:?} months in a year.", 12);
-    println!("{1:?} {0:?} is the {actor:?} name.",
+    println!("{:?} months in a year.", 12);  // 12 months in a year.
+    println!("{1:?} {0:?} is the {actor:?} name.", // "Christian" "Slater" is the "actor's" name.
              "Slater",
              "Christian",
              actor="actor's");
 
     // `Structure` is printable!
-    println!("Now {:?} will print!", Structure(3));
+    println!("Now {:?} will print!", Structure(3)); // Now Structure(3) will print!
 
     // The problem with `derive` is there is no control over how
     // the results look. What if I want this to just show a `7`?
-    println!("Now {:?} will print!", Deep(Structure(7)));
+    println!("Now {:?} will print!", Deep(Structure(7))); // Now Deep(Structure(7)) will print!
 }
 
+// So fmt::Debug definitely makes this printable but sacrifices some elegance. Rust also provides "pretty printing" with {:#?}.
 #[derive(Debug)]
 struct Person<'a> {
     name: &'a str,
@@ -46,4 +47,8 @@ fn main() {
 
     // Pretty print
     println!("{:#?}", peter);
+    // Person {
+    //     name: "Peter",
+    //     age: 27,
+    // }
 }
