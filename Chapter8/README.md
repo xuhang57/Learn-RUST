@@ -115,3 +115,162 @@ Using an `Enum` plus a `match` expression means that Rust will ensure at compile
 will get at runtime, the enum technique won't work, you can use a trait object
 
 ## Storing UTF-8 Encoded Text with Strings
+
+New Rustaceans commonly get stuck on strings for a combination of three reasons:
+
+* Rust's propensity for exposing possible errors
+* strings being a more complicated data structure than many programmers give them credit for
+* UTF-8
+
+### What is a String?
+
+Rust has only one string type in the core language, which is the string slice `str` that is usually seen in its borrowed form `&str`. The `String` type, which is provided by Rust
+Standard library rather than coded into the core language, is a growable, mutable, owned, UTF-8 encoded string type.
+
+### Creating a new String
+
+```rust
+let mut s = String::new();
+```
+
+```rust
+let data = "initial contents";
+
+let s = data.to_string();
+
+// the method also works on a literal directly
+let s = "initial contents".to_string()
+```
+
+```rust
+let s = String::from("initial contents");
+```
+
+### Updating a String
+
+A `String` can grow in size and its content can change, just like the contents of a `Vec<T>`, if you push more data into i.
+
+```rust
+let mut s = String::from("foo");
+s.push_str("bar");
+```
+
+The `push` method takes a single character as a parameter and adds it to the `String`.
+
+```rust
+let mut s = String::from("lo");
+s.push('l');
+```
+
+```rust
+let s1 = String::from("Hello, ");
+let s2 = String::from("world!");
+let s3 = s1 + &s2; // note s1 has been moved here and can no longer be used.
+```
+
+The reason `s1` is no longer valid after the addition and the reason we used a reference to `s2` has to do with teh signature of the method that gets called
+when we use `+` operator. The `+` operator uses the `add` method, whose signature looks something like:
+
+```rust
+fn add(self, s: &str) -> String {}
+```
+
+First, `s2` has an `&`, which means that we are adding a reference of the second string to the first string because of the `s` parameter in the add function:
+we can only add a `&str` to a String; we cannot add two `String` values together. The reason we are able to use `&s2` in the call to add is that the compiler
+can coerce the &String argument into a &str. When we call the add method, Rust uses a deref coercion, which here turns `&s2` into `&s2[..]`.
+
+Second, we can see in the signature that add takes ownership of self, because self does not have an `&`. This means `s1` will be moved into the add call and no
+longer be valid after that. So although `let s3 = s1 + &s2;`, looks like it will copy both strings and create a new one, this statement actually takes ownership
+of `s1`, appends a copy of the contents of `s2`, and then returns ownership of the result.
+
+If we need to concatenate multiple strings, the behavior of the `+` operator gets unwieldy:
+
+```rust
+let s1 = String::from("tic");
+let s2 = String::from("tac");
+let s3 = String::from("toe");
+
+let s = s1 + "-" + &s2 + "-" + &s3; // s = "tic-tac-toe"
+```
+
+To simplify, we could have:
+
+```rust
+
+let s1 = String::from("tic");
+let s2 = String::from("tac");
+let s3 = String::from("toe");
+
+let s = format!("{}-{}-{}", s1, s2, s3);
+```
+
+### Indexing into Strings
+
+In many other languages, accessing individual characters in a string by referencing them by index is a valid and common operations. However, if you try to access
+parts of a `String` using indexing syntax in Rust, you will get an error. In other words, Rust does not support indexings for Strings.
+
+### Internal Representation
+
+A String is a wrapper over a `Vec<u8>`.
+
+```rust
+let hello = String::from("Hola");
+```
+
+In this case, `len` will be 4, which means the vector storing the string "Hola" is 4 bytes long. Each of those letters takes 1 byte when encoding in UTF-8. However if
+it is other languages suc has Cyrillic letters, it takes more bytes to encode a character because each Unicode scalar value in strings takes 2 bytes of storages. Therefore
+an index into the string's bytes will not always correlate to a valid Unicode scalar value.
+
+### Slicing Strings
+
+Indexing into a string is often a bad idea because it is not clear what the return type of string-indexing should be: a byte value, a character, a grapheme cluster, or a string
+slice. Rust asks you to be more specific if you really need to use indices to create string slices.
+
+```rust
+let hello = "ABCD";
+let s = &hello[0..4];
+```
+
+Here `s` will be a &str that contains the first 4 bytes of the string.
+
+### Methods for Iterating Over Strings
+
+```rust
+for b in "नमस्ते".bytes() {
+    println!("{}", b);
+}
+
+for c in "नमस्ते".chars() {
+    println!("{}", c);
+}
+```
+
+## Storing Keys with Associated Values in Hash Maps
+
+Hash maps are useful when you want to look up data not by using an index, as you can with vector, but by using a key that can be of any type.
+
+### Creating a New Hash Map
+
+```rust
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+
+scores.insert(String::from("Blue"), 10);
+scores.insert(String::from("Yellow"), 50);
+```
+
+```rust
+use std::collections::HashMap;
+
+let teams = vec![String::from("Blue"), String::from("Yellow")];
+let initial_scores = vec![10, 50];
+
+let mut scores: HashMap<_, _> =
+    teams.into_iter().zip(initial_scores.into_iter()).collect();
+```
+
+The type annotation `HashMap<_, _>` is needed here because it is possible to `collect` into many different data structure and Rust does not know
+which you want unless you specify. With underscores, Rust can infer the type of the data in the vectors.
+
+
