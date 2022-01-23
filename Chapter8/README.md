@@ -49,7 +49,7 @@ Like any other `struct`, a vector is freed when it goes out of scope
 ```rust
 let v = vec![1, 2, 3, 4, 5];
 
-let thrid: &i32 = &v[2];
+let third: &i32 = &v[2];
 println!("The third element is {}", third);
 
 match v.get(2) {
@@ -274,3 +274,95 @@ The type annotation `HashMap<_, _>` is needed here because it is possible to `co
 which you want unless you specify. With underscores, Rust can infer the type of the data in the vectors.
 
 
+### Hash Maps and Ownership
+
+For types that implement the `Copy` trait, like `i32`, the values are copied into the hash map. For owned values like `String`, the values will be moved and the hash map will be the owner of those values
+
+```rust
+use std::collections::HashMap;
+
+let field_name = String::from("Favorite color");
+let field_value = String::from("Blue");
+
+let mut map = HashMap::new();
+map.insert(field_name, field_value);
+// feild_name and field_value are invalid at this point
+```
+
+If we insert references to values into the hash map, the values won't be moved into the hash map. The values that the references point to must be valid for at least as long as the hash map is valid.
+
+### Accessing Values in a Hash Map
+
+```rust
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+scores.insert(String::from("Blue"), 10);
+scores.insert(String::from("Yellow"), 50);
+
+let team_name = String::from("Blue");
+let score = scores.get(&team_name); // returns Some(&10)
+```
+
+We can also iterate over each key/value pair in a hash map in a similar manner as we do with vectors:
+
+```rust
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+scores.insert(String::from("Blue"), 10);
+scores.insert(String::from("Yellow"), 50);
+
+for (key, value) in &scores {
+    println!("{}, {}", key, value);
+}
+```
+
+### Overwriting a value
+
+```rust
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+scores.insert(String::from("Blue"), 10);
+scores.insert(String::from("Blue"), 50);
+
+println("{:?}", scores); // {"Blue", 25}
+```
+
+### Only inserting a value if the key has no value
+
+```rust
+use std::collections::HashMap;
+
+let mut scores = HashMap::new();
+scores.insert(String::from("Blue"), 10);
+
+scores.entry(String::from("Yellow")).or_insert(60);
+scores.entry(String::from("Blue")).or_insert(50);
+
+println("{:?}", scores);
+```
+
+### Updating a value based on the old value
+
+```rust
+use std::collections::HashMap;
+
+let text = "hello world wonderful world";
+
+let mut map = HashMap::new();
+
+for word in text.split_whitespace() {
+    let count = map.entry(word).or_insert(0);
+    *count += 1;
+}
+
+println!("{:?}, map); // {"world": 2, "hello": 1, "wonderful": 1}
+```
+
+The `or_insert` method actually returns a mutable reference &mut V to the value of its key. Here we store that mutable reference in the `count` variable, so in order to assgin to that value, we must first dereference `count` with asterisk (`*`). The mutable reference goes out of scope at the end of the `for` loop, so all of these changes are safe and allowed by the borrowing rules.
+
+### Hash Functions
+
+By default, `HashMap` uses a hashing function called SipHash that can provide resistance to Denial of Service attacks involving hash tables. Not the fastest but the trade-off for better security.
