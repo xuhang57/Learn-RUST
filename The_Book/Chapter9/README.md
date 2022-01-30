@@ -24,7 +24,7 @@ use std::net::IpAddr;
 
 let home: ipAddr = "127.0.0.1".parse().unwrap();
 ```
-
+k
 ## Guidelines for Error Handling
 
 * The bad state is not something that is expected to happen occasionally
